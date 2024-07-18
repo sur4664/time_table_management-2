@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Delete Class</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      body {
+        background: radial-gradient(
+          circle at 10% 20%,
+          rgba(91, 173, 254, 0.46) 0%,
+          rgba(91, 224, 254, 0.46) 47.2%,
+          rgba(170, 254, 235, 0.43) 90%
+        );
+        font-family: "Arial", sans-serif;
+      }
+      .navbar {
+        background-color: #007bff;
+      }
+      .navbar-brand,
+      .nav-link {
+        color: #fff !important;
+      }
+      .container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 30px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      }
+      h2 {
+        color: #343a40;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      button {
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg">
+      <a class="navbar-brand" href="/">Timetable Management</a>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="//teacher_dashboard">Teacher Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/student">Student Dashboard</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div class="text-center">
+      <img src="https://www.dsce.edu.in/images/Home/DSCE_LOGO-24.png" class="img-fluid" alt="Logo"  width='70%'>
+  </div>
+    <div class="container">
+      <h2>Delete a Class</h2>
+      <form id="DeleteClassForm">
+        <div class="form-group">
+          <label for="sem">Semester:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="sem"
+            placeholder="Enter semester"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="section">Section:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="section"
+            placeholder="Enter section"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="day">Day:</label>
+          <select class="form-control" id="day" name="day" required>
+            <option value="">Select a day</option>
+            <option value="monday">Monday</option>
+            <option value="tuesday">Tuesday</option>
+            <option value="wednesday">Wednesday</option>
+            <option value="thursday">Thursday</option>
+            <option value="friday">Friday</option>
+            <option value="saturday">Saturday</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="time">Time Slot:</label>
+          <select name="time" id="time" class="form-control" required>
+            <option value="">Select a time</option>
+            <option value="9:00">9:00</option>
+            <option value="10:00">10:00</option>
+            <option value="11:15">11:15</option>
+            <option value="12:15">12:15</option>
+            <option value="2:00">2:00</option>
+            <option value="3:00">3:00</option>
+            <option value="4:00">4:00</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-danger btn-block">
+          Delete Class
+        </button>
+      </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("DeleteClassForm");
+
+        form.addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          // Add teacher name input field
+
+          const sem = document.getElementById("sem").value;
+          const section = document.getElementById("section").value;
+          const time = document.getElementById("time").value;
+          const day = document.getElementById("day").value;
+
+          callApi("POST", "/api/delete", {
+            sem: sem,
+            section: section,
+            time: time,
+            day: day,
+          })
+            .then((response) => {
+              if (response.ok) {
+                alert(
+                  `Class deleted on ${day} at ${time} for Sem ${sem}, Section ${section} by ${teacherName}.`
+                );
+                form.reset(); // Reset the form after successful submission} else {
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              alert("class deleted");
+            });
+        });
+
+        function callApi(method, url, data) {
+          return fetch(url, {
+            method: method,
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

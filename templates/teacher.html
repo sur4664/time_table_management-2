@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet">
+    <style>
+        body {
+          background: radial-gradient(circle at 10% 20%, rgba(91, 173, 254, 0.46) 0%, rgba(91, 224, 254, 0.46) 47.2%, rgba(170, 254, 235, 0.43) 90%);
+            font-family: 'Arial', sans-serif;
+        }
+        .navbar {
+            background-color: #007bff;
+        }
+        .navbar-brand, .nav-link {
+            color: #fff !important;
+        }
+        .container {
+            max-width: 800px;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+        }
+        h1, h2 {
+            color: #007bff;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .form-control {
+            border-radius: 4px;
+        }
+        .form-row {
+            margin-bottom: 15px;
+        }
+        #calendar {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg">
+        <a class="navbar-brand" href="/">Timetable Management</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/student">Student Dashboard</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="text-center">
+        <img src="https://www.dsce.edu.in/images/Home/DSCE_LOGO-24.png" class="img-fluid" alt="Logo"  width='70%'>
+    </div>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Welcome, Teacher</h1>
+
+        <!-- Display Scheduled Classes -->
+        <div class="mb-4">
+            <h2 class="text-center mb-3">Scheduled Classes</h2>
+            <div id="calendar"></div>
+        </div>
+
+        <!-- Schedule a Class Form -->
+        <div class="mb-4">
+            <h2 class="text-center mb-3">Schedule a Class</h2>
+            <form id="scheduleClassForm">
+                <div class="form-row mb-3">
+                    <div class="col">
+                        <label for="sem">Sem:</label>
+                        <input type="text" class="form-control" id="sem" placeholder="Enter semester" required>
+                    </div>
+                    <div class="col">
+                        <label for="section">Section:</label>
+                        <input type="text" class="form-control" id="section" placeholder="Enter section" required>
+                    </div>
+                </div>
+                <div class="form-row mb-3">
+                    <div class="col">
+                        <label for="subject">Subject:</label>
+                        <input type="text" class="form-control" id="subject" placeholder="Enter subject" required>
+                    </div>
+                    <div class="col">
+                        <label for="time">Time:</label>
+                        <input type="time" class="form-control" id="time" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="day">Date:</label>
+                    <input type="date" class="form-control" id="day" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Schedule Class</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
+
+    <script>
+        console.log("hiiiiii")
+        document.addEventListener('DOMContentLoaded', function() {
+          document.getElementById('scheduleClass').addEventListener('click', function() {
+            // Assuming sem, section, subject, time, and date are defined earlier in your script
+            // For example, they could be extracted from form inputs like this:
+            const sem = document.getElementById('semInput').value;
+            const section = document.getElementById('sectionInput').value;
+            const subject = document.getElementById('subjectInput').value;
+            const time = document.getElementById('timeInput').value;
+            const day = document.getElementById('dayInput').value;
+            console.log("hii")
+            callApi("POST", teacherUrl, {
+              sem_no: sem,
+              section: section,
+              subject: subject,
+              time: time,
+              day: day
+          });
+            // Call the teacher-events API
+            //fetch(`/api/schedule?sem=${sem}&section=${section}&subject=${subject}&time=${time}&date=${date}`)
+              //.then(response => response.json())
+              //.then(data => {
+                // Handle the API response data
+                // For example, check for clashes and save the scheduled class
+              //  console.log(data); // Log the data for debugging
+              alert(`Class scheduled for ${subject} on ${day} at ${time} for Sem ${sem}, Section ${section}.`);
+              //})
+              //.catch(error => {
+                // Handle any errors
+              //  console.error('Error:', error);
+              //  alert('An error occurred while scheduling the class.');
+              //});
+          });
+      
+          // Handle updating the schedule
+         // document.getElementById('updateSchedule').addEventListener('click', function() {
+            // TODO: Add logic to update the timetable
+            //alert('Update schedule functionality is not yet implemented.');
+        console.log("Update Schedule clicked");
+            
+
+        alert(`Class scheduled for ${subject} on ${date} at ${time} for Sem ${sem}, Section ${section}.`);
+          });
+        
+      </script>
+
+  </script>
+</body>
+<script src="api.js"></script>
+</html>

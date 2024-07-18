@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet">
+    <style>
+        body {
+          background: radial-gradient(circle at 10% 20%, rgba(91, 173, 254, 0.46) 0%, rgba(91, 224, 254, 0.46) 47.2%, rgba(170, 254, 235, 0.43) 90%);
+            font-family: 'Arial', sans-serif;
+        }
+        .navbar {
+            background-color: #007bff;
+        }
+        .navbar-brand, .nav-link {
+            color: #fff !important;
+        }
+        .container {
+            max-width: 800px;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+        }
+        h1, h2 {
+            color: #007bff;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .form-control {
+            border-radius: 4px;
+        }
+        .form-row {
+            margin-bottom: 15px;
+        }
+        #calendar {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg">
+        <a class="navbar-brand" href="/">Timetable Management</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/teacher_dashboard">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/student">Student Dashboard</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Welcome, Teacher</h1>
+
+        <!-- Schedule a Class Form -->
+        <div class="mb-4">
+            <h2 class="text-center mb-3">Schedule a Class</h2>
+            <form id="scheduleClassForm">
+                <div class="form-row mb-3">
+                    <!--<div class="col">
+                        <label for="teacher_name">Teacher Name:</label>
+                        <input type="text" class="form-control" id="teacher_name" placeholder="Enter Teacher Name" required>
+                    </div>
+                    <div class="col">
+                        <label for="teacherId">Teacher ID:</label>
+                        <input type="text" class="form-control" id="teacherId" placeholder="Enter Teacher ID" required>
+                    </div>-->
+                    <div class="col">
+                        <label for="sem">Semester:</label>
+                        <input type="text" class="form-control" id="sem" placeholder="Enter Semester" required>
+                    </div>
+                    <div class="col">
+                        <label for="section">Section:</label>
+                        <input type="text" class="form-control" id="section" placeholder="Enter Section" required>
+                    </div>
+                </div>
+                <div class="form-row mb-3">
+                    <div class="col">
+                        <label for="subject">Subject:</label>
+                        <input type="text" class="form-control" id="subject" required placeholder="Enter Subject">
+                            
+                            <!-- Options will be populated dynamically -->
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label for="time">Time Slot:</label>
+                        <select class="form-control" id="time" required>
+                            <option value="9:00">9:00</option>
+                            <option value="10:00">10:00</option>
+                            <option value="11:15">11:15</option>
+                            <option value="12:15">12:15</option>
+                            <option value="2:00">2:00</option>
+                            <option value="3:00">3:00</option>
+                            <option value="4:00">4:00</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="day">Day:</label>
+                    <input type="text" class="form-control" id="day" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Schedule Class</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js"></script>
+    <script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('scheduleClassForm');
+
+      form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        // Add teacher name input field
+
+
+        const sem = document.getElementById('sem').value;
+        const section = document.getElementById('section').value;
+        const subject = document.getElementById('subject').value;
+        const time = document.getElementById('time').value;
+        const day = document.getElementById('day').value;
+    
+
+        callApi("POST", '/api/schedule', {
+       
+          'sem': sem,
+          'section': section,
+          'subject': subject,
+          'time': time,
+          'day': day
+        })
+        .then(response => {
+  if (response.status === 201) {
+    alert("Class scheduled successfully.");
+  } else if (response.status === 500) {
+    alert("Class not scheduled. A class already exists for the specified sem_no, section, day, and time.");
+  }
+   else if (response.status === 409) {
+    alert("Class not scheduled. Teacher has another class scheduled at the same time.");}
+  else {
+    // Handle other unexpected status codes
+    alert("An unexpected error occurred. Please try again.");
+  }
+})
+.catch(error => {
+  console.error('Error:', error);
+  alert("An error occurred while scheduling the class.");
+});
+      });
+    
+      function callApi(method, url, data) {
+        return fetch(url, {
+          method: method,
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+      }
+    });
+
+    
+  </script>
+
+  
+  
+</body>
+</html>
